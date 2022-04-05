@@ -11,7 +11,7 @@
 				"${file}",
 				"-o",
 				"${fileDirname}\\${fileBasenameNoExtension}.exe",
-				"--include-directory=C:/VulkanSDK/1.3.204.1/Include"
+				"--include-directory=${workspaceFolder}/Include"
 			],
 			"options": {
 				"cwd": "${fileDirname}"
