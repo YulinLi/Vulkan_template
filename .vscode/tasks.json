@@ -11,7 +11,13 @@
 				"${file}",
 				"-o",
 				"${fileDirname}\\${fileBasenameNoExtension}.exe",
-				"--include-directory=${workspaceFolder}/Include"
+				"-I",
+				"Include",
+				"-L",
+				"lib",
+				"-lvulkan-1",
+				"-lglfw3",
+				"-lgdi32"
 			],
 			"options": {
 				"cwd": "${fileDirname}"
