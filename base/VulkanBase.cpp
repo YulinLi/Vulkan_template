@@ -8,26 +8,27 @@ void VulkanBase::initWindow(){
 	window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
 }
 
-GLFWwindow* VulkanBase::getWindow(){ 
-	return window;
-}
-
 VkResult VulkanBase::createInstance(bool enableValidation){
     this->settings.validation = enableValidation;
+	//cout<<enableValidation<<"validation"<<endl;
 #if defined(_VALIDATION)
     this->settings.validation = true;
 #endif
     //appinfo
-    VkApplicationInfo appInfo={};
+    VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pApplicationName = name.c_str();
+	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+	appInfo.pEngineName = "No Engine";
+	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
     appInfo.pEngineName = name.c_str();
     appInfo.apiVersion = apiVersion;
     
     //glfwext
     uint32_t glfwExtensionCount = 0;
+	//const char** glfwExtensions; 
+	//glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
     std::vector<const char*> instanceExtensions;//const char** glfwExtensions;
-
     instanceExtensions.push_back(*glfwGetRequiredInstanceExtensions(&glfwExtensionCount));    
 
     //Get extensions supported by the instance and store for later use
@@ -61,7 +62,6 @@ VkResult VulkanBase::createInstance(bool enableValidation){
     //instanceinfo
     VkInstanceCreateInfo instanceCreateInfo{};
     instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    instanceCreateInfo.pNext = NULL;
     instanceCreateInfo.pApplicationInfo = &appInfo;
     if (instanceExtensions.size() > 0)
 	{
@@ -74,9 +74,13 @@ VkResult VulkanBase::createInstance(bool enableValidation){
 	}
 
     const char* validationLayerName = "VK_LAYER_KHRONOS_validation";
+	// const std::vector<const char*> validationLayers = {
+    // 	"VK_LAYER_KHRONOS_validation"
+	// };
     if (settings.validation)
 	{
 		// Check if this layer is available at instance level
+		//cout<<"setting validation"<<endl;
 		uint32_t instanceLayerCount;
 		vkEnumerateInstanceLayerProperties(&instanceLayerCount, nullptr);
 		std::vector<VkLayerProperties> instanceLayerProperties(instanceLayerCount);
@@ -84,19 +88,20 @@ VkResult VulkanBase::createInstance(bool enableValidation){
 		bool validationLayerPresent = false;
 		for (VkLayerProperties layer : instanceLayerProperties) {
 			if (strcmp(layer.layerName, validationLayerName) == 0) {
+				//cout<<"validationLayerPresent = true"<<endl;
 				validationLayerPresent = true;
 				break;
 			}
 		}
 		if (validationLayerPresent) {
 			instanceCreateInfo.ppEnabledLayerNames = &validationLayerName;
+			cout<<validationLayerName<<endl;
 			instanceCreateInfo.enabledLayerCount = 1;
 		} else {
 			std::cerr << "Validation layer VK_LAYER_KHRONOS_validation not present, validation is disabled";
 		}
 	}
 	for(int i=0;i<instanceExtensions.size();i++) cout<<instanceExtensions[i]<<endl;
-
     return vkCreateInstance(&instanceCreateInfo, nullptr, &instance);
 }
 

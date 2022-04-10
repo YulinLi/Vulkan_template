@@ -6,10 +6,12 @@
 #include <cstdlib>
 #include <VulkanBase.hpp>
 
-using namespace std;
-VulkanBase base(true);
+#define DEBUG
+#define ENABLE_VALIDATION true 
 
-class Vulkan_template{
+using namespace std;
+
+class Vulkan_template: public VulkanBase{
     public:
         void run(){
             initWindow();
@@ -17,16 +19,23 @@ class Vulkan_template{
             mainLoop();
             cleanup();         
         }
-    private:
-
-        void initWindow(){       
-            base.initWindow();
+        Vulkan_template() : VulkanBase(ENABLE_VALIDATION){ 
+            title = "Vulkan Example - template";
+            // camera.type = Camera::CameraType::lookat;
+            // camera.setPosition(glm::vec3(0.0f, 0.0f, -2.5f));
+            // camera.setRotation(glm::vec3(0.0f));
+            // camera.setPerspective(60.0f, (float)width / (float)height, 1.0f, 256.0f);
         }
-        void initVulkan(){  
-            VkResult err = base.createInstance(true);
+    private:
+        void initVulkan(){ 
+            VkResult err = createInstance(ENABLE_VALIDATION);
+
+	        if (err!=VK_SUCCESS) {
+		        cout<<("Could not create Vulkan instance");
+	        }
         }
         void mainLoop(){
-            while(!glfwWindowShouldClose(base.getWindow())){
+            while(!glfwWindowShouldClose(window)){
                 glfwPollEvents();    
             }
         }
@@ -35,11 +44,11 @@ class Vulkan_template{
         }
 };
 
-int main(){
-    Vulkan_template app;
+Vulkan_template *app = new Vulkan_template();
 
+int main(){
     try{
-            app.run();        
+            app->run();        
     }catch (const std::exception& e){
         std::cerr <<e.what() << std::endl;
         return EXIT_FAILURE;

@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <GLFW/glfw3.h>
+#include <VulkanTool.hpp>
 
 #include <vulkan/vulkan.h>
 
@@ -34,11 +35,10 @@ class VulkanBase{
 	    } settings;
 
         std::string title = "Vulkan Example";
-	    std::string name = "vulkanExample";
+	    std::string name = "VulkanExample";
         uint32_t apiVersion = VK_API_VERSION_1_0;
 
         void initWindow();
-        GLFWwindow* getWindow();
         VulkanBase(bool enableValidation);
         virtual ~VulkanBase();
         virtual VkResult createInstance(bool enableValidation);
